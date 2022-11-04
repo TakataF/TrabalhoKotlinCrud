@@ -20,7 +20,6 @@ class CardView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCardViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         binding.adicionar.setOnClickListener(){
             val intent = Intent(this, Cadastro::class.java)
             startActivity(intent)
@@ -35,5 +34,6 @@ class CardView : AppCompatActivity() {
             Log.e("onResume", "onResume: ${personList.size}")
         }
     }
+
 
 }
