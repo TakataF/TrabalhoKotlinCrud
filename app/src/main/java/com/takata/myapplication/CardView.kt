@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.takata.myapplication.adapters.PersonAdapter
 import com.takata.myapplication.databases.AppDatabase
 import com.takata.myapplication.databinding.ActivityCardViewBinding
 import com.takata.myapplication.databinding.ActivityMainBinding
@@ -31,7 +33,12 @@ class CardView : AppCompatActivity() {
         super.onResume()
         lifecycleScope.launch {
             val personList = AppDatabase(this@CardView).getPersonDao().getAllPerson()
-            Log.e("onResume", "onResume: ${personList.size}")
+            binding.recyclerView.apply {
+                layoutManager = LinearLayoutManager(this@CardView)
+                adapter = PersonAdapter().apply {
+                    setData(personList)
+                }
+            }
         }
     }
 
