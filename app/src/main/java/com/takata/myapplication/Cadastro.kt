@@ -11,13 +11,30 @@ import kotlinx.coroutines.launch
 
 class Cadastro : AppCompatActivity() {
     private lateinit var binding: ActivityCadastroBinding
+    private var person: Person? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonCadastro.setOnClickListener{ addPerson() }
+        person = intent.getSerializableExtra("Data") as? Person
+
+        if(person == null){
+            binding.buttonCadastroAtualizar.text = "Cadastrar"
+            binding.cadastro.text = "Cadastro"
+        }
+        else {
+            binding.cadastro.text = "Atualização"
+            binding.buttonCadastroAtualizar.text = "Atualizar"
+            binding.nome.setText(person?.name.toString())
+            binding.email.setText(person?.email.toString())
+            binding.telefone.setText(person?.phone.toString())
+            binding.endereco.setText(person?.address.toString())
+            binding.nascimento.setText(person?.birthDate.toString())
+        }
+
+        binding.buttonCadastroAtualizar.setOnClickListener{ addPerson() }
 
     }
 
@@ -29,15 +46,22 @@ class Cadastro : AppCompatActivity() {
         val birthDate = binding.nascimento.text.toString()
 
         lifecycleScope.launch {
-            val person = Person(
-                name = name,
-                email = email,
-                birthDate = birthDate,
-                phone = phone,
-                address = address
-            )
-            AppDatabase(this@Cadastro).getPersonDao().addPerson(person)
-            finish()
+            if (person == null){
+                val person = Person(
+                    name = name,
+                    email = email,
+                    birthDate = birthDate,
+                    phone = phone,
+                    address = address
+                )
+                AppDatabase(this@Cadastro).getPersonDao().addPerson(person)
+                finish()
+            } else {
+                val p = Person(name, email, birthDate, phone, address)
+                p.id = person?.id ?: 0
+                AppDatabase(this@Cadastro).getPersonDao().updatePerson(p)
+                finish()
+            }
         }
     }
 }
